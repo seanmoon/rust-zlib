@@ -1,26 +1,27 @@
 //
-// zlib bindings for rust (0.6)
+// zlib bindings for rust (0.7)
 //
 // based on https://github.com/thestinger/rust-snappy
 //
-// Author: S Moon <ssamoon@ucla.edu>
-// Date:   2013-05-03
-//
 
-#[link(name = "zlib", vers = "0.1.0")];
+#[link(name = "zlib", vers = "0.1.1")];
 
-use core::libc::{c_char, c_int};
-use core::vec;
+use std::libc::c_int;
+use std::{str,vec};
 
 static BUF_SIZE:u64      =  4096;
 static Z_OK:c_int        =     0;
 static Z_BUF_ERROR:c_int =    -5;
 
-extern mod z {
+mod z {
+  use std::libc::{c_char, c_int};
+  #[link_args = "-lz"]
+  extern {
     fn compressBound(srclen: u64) -> u64;
     fn compress(dest: *mut u8, destlen: *mut u64, src: *u8, srclen: u64) -> c_int;
     fn uncompress(dest: *mut u8, destlen: *mut u64, src: *u8, srclen: u64) -> c_int;
     fn zlibVersion() -> *c_char;
+  }
 }
 
 pub fn zlib_version() -> ~str {
@@ -32,7 +33,7 @@ pub fn zlib_version() -> ~str {
 
 pub fn compress(src: &[u8]) -> ~[u8] {
     unsafe {
-        let mut len     = vec::len(src) as u64;
+        let len         = src.len() as u64;
         let psrc        = vec::raw::to_ptr(src);
         let mut destlen = z::compressBound(len);
         let mut dest    = vec::with_capacity(destlen as uint);
@@ -47,7 +48,7 @@ pub fn compress(src: &[u8]) -> ~[u8] {
 
 fn _uncompress(src: &[u8], bufsize: u64) -> Option<~[u8]> {
     unsafe {
-        let mut len     = vec::len(src) as u64;
+        let len         = src.len() as u64;
         let mut destlen = bufsize;
         let mut dest    = vec::with_capacity(destlen as uint);
         let pdest       = vec::raw::to_mut_ptr(dest);
@@ -72,7 +73,7 @@ pub fn uncompress(src: &[u8]) -> Option<~[u8]> {
     _uncompress(src, BUF_SIZE)
 }
 
-#[test]
+#[cfg(test)]
 mod tests {
     use super::*;
 
