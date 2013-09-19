@@ -3,9 +3,6 @@
 //
 // based on https://github.com/thestinger/rust-snappy
 //
-
-#[link(name = "zlib", vers = "0.1.1")];
-
 use std::libc::c_int;
 use std::{str,vec};
 
