@@ -24,6 +24,8 @@ mod z {
   }
 }
 
+#[fixed_stack_segment] 
+#[inline(never)]
 pub fn zlib_version() -> ~str {
     unsafe {
         let s = z::zlibVersion();
@@ -31,6 +33,8 @@ pub fn zlib_version() -> ~str {
     }
 }
 
+#[fixed_stack_segment] 
+#[inline(never)]
 pub fn compress(src: &[u8]) -> ~[u8] {
     unsafe {
         let len         = src.len() as u64;
@@ -46,6 +50,8 @@ pub fn compress(src: &[u8]) -> ~[u8] {
     }
 }
 
+#[fixed_stack_segment] 
+#[inline(never)]
 fn _uncompress(src: &[u8], bufsize: u64) -> Option<~[u8]> {
     unsafe {
         let len         = src.len() as u64;
@@ -69,6 +75,8 @@ fn _uncompress(src: &[u8], bufsize: u64) -> Option<~[u8]> {
     }
 }
 
+#[fixed_stack_segment] 
+#[inline(never)]
 pub fn uncompress(src: &[u8]) -> Option<~[u8]> {
     _uncompress(src, BUF_SIZE)
 }
